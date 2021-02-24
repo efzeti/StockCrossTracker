@@ -1,0 +1,4 @@
+# Project exclude paths
+/console/target/
+/data/target/
+/logic/target/
