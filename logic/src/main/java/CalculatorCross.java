@@ -1,3 +1,5 @@
+import yahoofinance.Stock;
+
 import java.util.List;
 
 public interface CalculatorCross {
