@@ -12,17 +12,21 @@
     <artifactId>data</artifactId>
 
     <dependencies>
+
+
         <dependency>
             <groupId>com.yahoofinance-api</groupId>
             <artifactId>YahooFinanceAPI</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.example</groupId>
-            <artifactId>data</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
         </dependency>
+
+
+
     </dependencies>
 
 
