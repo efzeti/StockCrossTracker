@@ -5,7 +5,7 @@
         </encoder>
     </appender>
     <logger name="org.springframework" level="INFO"/>
-    <logger name="fz.yahoodata" level="INFO"/>
+    <logger name="fz.crosstracker" level="INFO"/>
 
     <!--    LEVELS TRACE->DEBUG->INFO->WARN->ERROR-->
     <!--    CHECK http://logback.qos.ch/manual/architecture.html FOR MORE INFO-->
