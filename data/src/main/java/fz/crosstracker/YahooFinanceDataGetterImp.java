@@ -1,4 +1,4 @@
-package fz.yahoodata;
+package fz.crosstracker;
 
 import com.sun.tools.javac.Main;
 import org.slf4j.Logger;
@@ -7,8 +7,6 @@ import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
 import yahoofinance.histquotes.Interval;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,32 +30,26 @@ public class YahooFinanceDataGetterImp implements YahooFinanceDataGetter {
 
     private final String REVOLUT_STOCK_PATH = "data\\src\\main\\resources\\revolut_stocks.txt";
 
-    private static String crossDate = null;
+    private String crossDate = null;
 
-    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
 
-
-    @Override
-    public List<Stock> getInitialData() {
-        List<String> stockList = makeStkListFromFile(REVOLUT_STOCK_PATH);
-        return getInitialData(stockList);
-    }
 
     @Override
-    public List<Stock> getInitialData(List<String> stockSymbols) {
+    public List<Stock> getDataFromPeriod(List<String> stockSymbols, int daysPast) {
+
 
         List<Stock> stocks = new ArrayList<>();
 
 
         stockSymbols.parallelStream().forEach( symbol -> {
 
-            System.out.format("STK Symbol: %-4s has started.\n",symbol);
 
             Calendar from = Calendar.getInstance();
             Calendar to = Calendar.getInstance();
 
-            from.add(Calendar.DAY_OF_MONTH, -201);
+            from.add(Calendar.DAY_OF_MONTH, ((-1) * daysPast));
 
 
             Stock stock = null;
@@ -71,7 +63,7 @@ public class YahooFinanceDataGetterImp implements YahooFinanceDataGetter {
                 stocks.add(stock);
             }
 
-            System.out.format("STK Symbol: %-4s has finished.\n",symbol);
+            System.out.format("Retrieving online data for %s has finished.\n",symbol);
 
         });
 
@@ -81,10 +73,10 @@ public class YahooFinanceDataGetterImp implements YahooFinanceDataGetter {
     }
 
     @Override
-    public Stock getInitialData(String stockSymbol) {
+    public Stock getDataFromPeriod(String stockSymbol, int daysPast) {
 
         try {
-            return getInitialData(Collections.singletonList(stockSymbol)).get(0);
+            return getDataFromPeriod(Collections.singletonList(stockSymbol), daysPast).get(0);
         } catch (IndexOutOfBoundsException e){
             return null;
         }
@@ -98,8 +90,6 @@ public class YahooFinanceDataGetterImp implements YahooFinanceDataGetter {
 
         stockSymbols.parallelStream().forEach( symbol -> {
 
-            System.out.format("STK Symbol: %-4s has started.\n",symbol);
-
 
             Stock stock = null;
             try {
@@ -112,7 +102,7 @@ public class YahooFinanceDataGetterImp implements YahooFinanceDataGetter {
                 stocks.add(stock);
             }
 
-            System.out.format("STK Symbol: %-4s has finished.\n",symbol);
+            System.out.format("Retrieving online data for %s has finished.\n",symbol);
 
         });
 
@@ -120,11 +110,6 @@ public class YahooFinanceDataGetterImp implements YahooFinanceDataGetter {
         return stocks;
     }
 
-    @Override
-    public List<Stock> getTodaysData() {
-        List<String> stockList = makeStkListFromFile(REVOLUT_STOCK_PATH);
-        return getTodaysData(stockList);
-    }
 
     @Override
     public Stock getTodaysData(String stockSymbol) {
@@ -137,24 +122,10 @@ public class YahooFinanceDataGetterImp implements YahooFinanceDataGetter {
 
     }
 
-    private static List<String> makeStkListFromFile(String filePath){
+    @Override
+    public boolean correctSymbol(String symbol) {
 
-        List<String> stkList = new ArrayList<>();
-
-        try(BufferedReader br = new BufferedReader(new FileReader(filePath))){
-
-            String stkLine = br.readLine();
-            while(stkLine != null){
-                stkList.add(stkLine);
-                stkLine = br.readLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return stkList;
-
+        return symbol.matches("[a-zA-Z]+") && (symbol.length() < 6 && symbol.length() > 0);
     }
-
 
 }

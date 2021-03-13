@@ -1,4 +1,4 @@
-package fz.yahoodata;
+package fz.crosstracker;
 
 import com.sun.tools.javac.Main;
 import org.junit.jupiter.api.Assertions;
@@ -20,12 +20,17 @@ class YahooFinanceDataGetterImpTest {
     String wrongSymbol;
     List<String> testSymbolList;
 
+    int daysPeriod;
+
     @BeforeEach
     void setUp() {
         stockGetter = new YahooFinanceDataGetterImp();
         testSymbol = "TSLA";
         wrongSymbol = "TSLA@";
         testSymbolList = Arrays.asList("TSLA", "AAPL", "KO");
+        daysPeriod = 5;
+
+
     }
 
     //    No point testing this one
@@ -35,21 +40,21 @@ class YahooFinanceDataGetterImpTest {
 
     @Test
     void testGetInitialDataString() {
-        Stock stock = stockGetter.getInitialData(testSymbol);
+        Stock stock = stockGetter.getDataFromPeriod(testSymbol, daysPeriod);
 
         Assertions.assertNotNull(stock.getQuote().getAsk());
     }
 
     @Test
     void testGetInitialDataWrongString() {
-        Stock stock = stockGetter.getInitialData(wrongSymbol);
+        Stock stock = stockGetter.getDataFromPeriod(wrongSymbol, daysPeriod);
 
         Assertions.assertNull(stock);
     }
 
     @Test
     void testGetInitialDataList() {
-        List<Stock> stocks = stockGetter.getInitialData(testSymbolList);
+        List<Stock> stocks = stockGetter.getDataFromPeriod(testSymbolList, daysPeriod);
 
         Assertions.assertEquals(stocks.size(),3);
     }
@@ -68,7 +73,7 @@ class YahooFinanceDataGetterImpTest {
 
     @Test
     void testGetTodaysDataWrongString() {
-        Stock stock = stockGetter.getInitialData(wrongSymbol);
+        Stock stock = stockGetter.getDataFromPeriod(wrongSymbol, daysPeriod);
 
         Assertions.assertNull(stock);
     }
