@@ -28,7 +28,7 @@ public class SQLConnectorImpl implements SQLConnector{
 
     private final String SINGLE_QUOTE_EXTRACTION = "SELECT * FROM %s WHERE %s = ?";
 
-    private final String SINGLE_QUOTE_EXTRACTION_LATEST = "SELECT * FROM %s ORDER BY date DESC";
+    private final String SINGLE_QUOTE_EXTRACTION_LATEST = "SELECT * FROM %s ORDER BY date DESC LIMIT 1";
 
     private final String SINGLE_QUOTE_EXTRACTION_DATE = "SELECT * FROM %s WHERE date = ?";
 
@@ -159,16 +159,22 @@ public class SQLConnectorImpl implements SQLConnector{
                     continue;
                 }
 
-                quoteInsertionStatement.setString(1, hq.getSymbol());
-                quoteInsertionStatement.setString(2, DATE_FORMAT.format(hq.getDate().getTime()));
-                quoteInsertionStatement.setDouble(3, hq.getOpen().doubleValue());
-                quoteInsertionStatement.setDouble(4, hq.getLow().doubleValue());
-                quoteInsertionStatement.setDouble(5, hq.getHigh().doubleValue());
-                quoteInsertionStatement.setDouble(6, hq.getClose().doubleValue());
-                quoteInsertionStatement.setDouble(7, hq.getAdjClose().doubleValue());
-                quoteInsertionStatement.setLong(8, hq.getVolume());
+                try {
+                    quoteInsertionStatement.setString(1, hq.getSymbol());
+                    quoteInsertionStatement.setString(2, DATE_FORMAT.format(hq.getDate().getTime()));
+                    quoteInsertionStatement.setDouble(3, hq.getOpen().doubleValue());
+                    quoteInsertionStatement.setDouble(4, hq.getLow().doubleValue());
+                    quoteInsertionStatement.setDouble(5, hq.getHigh().doubleValue());
+                    quoteInsertionStatement.setDouble(6, hq.getClose().doubleValue());
+                    quoteInsertionStatement.setDouble(7, hq.getAdjClose().doubleValue());
+                    quoteInsertionStatement.setLong(8, hq.getVolume());
 
-                quoteInsertionStatement.execute();
+                    quoteInsertionStatement.execute();
+                } catch (NullPointerException e){
+                    e.printStackTrace();
+                    System.out.println();
+                    System.out.println(e.getMessage());
+                }
             }
 
 
@@ -255,7 +261,6 @@ public class SQLConnectorImpl implements SQLConnector{
                 Calendar calendar = Calendar.getInstance();
                 Date date = DATE_FORMAT.parse(results.getString("date"));
                 calendar.setTime(date);
-
                 return getSingleQuote(symbol, calendar);
             }
 
